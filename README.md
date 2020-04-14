@@ -1,12 +1,15 @@
 # HackingCheatSheet
 ### outline
-* Hacking Tool
-	* [proxychains](#proxychains)
+* Hacking Tools
+	* [Proxychains](#Proxychains)
+	* [Nmap](#Nmap)
+	* [Exploitdb](#Exploitdb)	
+	* [Metasploit](#Metasploit)
 * CTF Pwn Cheatsheet
 * Privilege Escalation
 * Reverse Shell
-## Hacking Tool
-### proxychains 
+## Hacking Tools
+### Proxychains 
 Proxychaons is a tool that could let us anonymous on the internet.
 * Install On Ubuntu
 ```
@@ -20,7 +23,7 @@ Proxychaons is a tool that could let us anonymous on the internet.
 1. brew install proxychains-ng 
 2. close SIP
    Reboot computer and prsee "Command + R" into recovery mode.
-   Press Utilities -> Terminal (At upper lefet).
+   Press Utilities -> Terminal (At upper left).
    Enter "csrutil disable".
    Reboot.
 ```
@@ -151,4 +154,31 @@ tcp_connect_time_out 80000
 #socks4 	127.0.0.1 9050
 socks5 	127.0.0.1 9150
 ```
+* Usage
+```
+proxychains4 curl www.example.com
+(When using MacOS remembering to open tor browser before using proxychains)
+```
+### Nmap
+Scanning specific ports
+```
+nmap -p 80-200
+```
+Scanning opened port and service version
+```
+nmap "IP" --top-ports 1000 --open -sV
+```
+Scanning opened port and OS information 
+```
+nmap -O "IP"
+```
+Detect all powered-on hosts
+```
+nmap -sP "IP"
+```
+### Exploitdb
 
+```
+
+```
+### Metasploit
