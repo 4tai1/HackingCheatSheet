@@ -29,9 +29,9 @@ Proxychaons is a tool that could let us anonymous on the internet.
 Linux : sudo apt-get install tor
 MacOS : download from "https://www.torproject.org/download/"
 ```
-* Setting Config File
-File Path :
-	Linux : /etc/proxychains.conf
+* Setting Config File  
+File Path :  
+ 	Linux : /etc/proxychains.conf  
 	MacOS : /usr/local/etc/proxychains.conf
 ```
 # proxychains.conf  VER 4.x
