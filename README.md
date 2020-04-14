@@ -10,28 +10,24 @@
 Proxychaons is a tool that could let us anonymous on the internet.
 * Install On Ubuntu
 ```
-* git clone https://github.com/rofl0r/proxychains
-* cd proxychains
-* ./configure
-* make
-* make install  
+1. git clone https://github.com/rofl0r/proxychains
+2. cd proxychains
+3. ./configure
+4. make & make install  
 ```
 * Install On MacOS
 ```
-* brew install proxychains-ng 
-* close SIP
-	* Reboot computer and prsee "Command + R" into recovery mode
-	* Press Utilities -> Terminal (At upper lefet)
-	* Enter "csrutil disable"
-	* Reboot
+1. brew install proxychains-ng 
+2. close SIP
+   Reboot computer and prsee "Command + R" into recovery mode.
+   Press Utilities -> Terminal (At upper lefet).
+   Enter "csrutil disable".
+   Reboot.
 ```
 * Install Tor
 ```
-* Linux :
-	sudo apt-get install tor
-
-*MacOS :
-	download from "https://www.torproject.org/download/"
+Linux : sudo apt-get install tor
+MacOS : download from "https://www.torproject.org/download/"
 ```
 * Setting Config File
 File Path :
