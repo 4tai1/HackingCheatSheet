@@ -3,6 +3,8 @@
 * Hacking Tools
 	* [Proxychains](#Proxychains)
 	* [Nmap](#Nmap)
+	* [Nicto](#Nicto)
+	* [Dirsearch](#Dirsearch)
 	* [Exploitdb](#Exploitdb)	
 	* [Metasploit](#Metasploit)
 * CTF Pwn Cheatsheet
@@ -176,8 +178,23 @@ Detect all powered-on hosts
 ```
 nmap -sP "IP"
 ```
+### Nicto
+This is a tool for scanning the web service version and the existing vulnerabilities.
+* Usage 
+```
+nicto -h "Target IP" -p "Target Port"
+```
+### Dirsearch
+It is a tool that could brute force directories and files in websites.
+* Install & Usage
+```
+git clone https://github.com/maurosoria/dirsearch.git
+cd dirsearch
+python3 dirsearch.py -u "Web URL" -e *
+```
 ### Exploitdb
 This is an exploit database
+* Usage
 ```
 searchsploit linux 4 priv  # Searching existing exploit about "linux kernel 4.x privilege escalation"
 ```
