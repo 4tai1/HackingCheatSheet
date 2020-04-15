@@ -174,9 +174,9 @@ Scanning opened port and OS information
 ```
 nmap -O "IP"
 ```
-Detect all powered-on hosts
+Detect hosts that are powered on in this domain
 ```
-nmap -sP "IP"
+nmap -sP "xxx.xxx.xxx.0/24"
 ```
 ### Nicto
 This is a tool for scanning the web service version and the existing vulnerabilities.
