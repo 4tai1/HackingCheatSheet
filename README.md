@@ -235,7 +235,7 @@ hydra -l "Target User Name" -P rockyou.txt "IP"
 ### Environment
 * Pull ubuntu environment from dockerhub
 ```
-docker pull ubuntu:19.04 #
+docker pull ubuntu:19.04 # Selet linux version you want
 docker run -i -t --name create_env ubuntu:19.04 bash
 ```
 * Setuo docker image environment 
