@@ -10,6 +10,9 @@
 	* [Brute force password tools](#Password-crack)
 * CTF Pwn Cheatsheet
 	* [Build pwn environment with docker](#Environment)
+	* [Format string payload](#FormatString)
+	* [Linux heap mechanism](#LinuxHeap)
+	* [Linux IO_FILE](#IO_FILE)
 	* [Others](#Others)
 * Privilege Escalation
 * Reverse Shell
@@ -208,8 +211,8 @@ This is just an useful penetration test tool.
 search Apache 	# Searching the vulnerability about "Apache"
 use XXXXXX    	# Using the exp
 show options  	# Show the exp options
-set XXX 		# Setting the options
-exploit			# run the exp
+set XXX 	# Setting the options
+exploit		# run the exp
 ```
 * Meterpreter
 This is a subservice in metasploit. It could help us create the malicious scripts.
@@ -271,6 +274,88 @@ echo "set -g mouse on" > .tmux.conf
 ```
 docker commit "Container ID" "Image Name"
 docker run -it --privileged --name "Container Name" -v "Shared Folder Path" "Your Docker Image"
+```
+### FormatString
+* Leak memory
+```
+"%N$s" + "got@xxx"
+```
+* Modify memory 
+```
+"%1768c%10$hn" + "some offset" + "got@xxx"    # 1768 = 0x6E8 , got@xxx : 0x7fxxxxxx06E8
+```
+### LinuxHeap
+* Fast bin
+```
+7 bins
+Size < 0x90 bytes
+Single link list (LIFO)
+When we free the fast bin chnuk P flag would "not" be setted to zero.
+```
+```
+Address alignment weakness
+When malloc fast bin, it will check if the size is correct.
+Fasbin attack 
+-> modify fd address and malloc it.
+```
+* Small bin
+```
+62 bins
+Size : 0x20 ~ 0x3f0
+Double link list (FIFO)
+When we free the small bin chnuk P flag would be setted to zero.
+```
+* Large bin 
+```
+Size >= 0x400 bytes
+Double link list
+```
+* Unsorted bin
+```
+If chunk size bigger then fast bin, it will be put in unsirted bin first.
+If the chunk size we need doesn't in tcache and fast bin, chunk will be split from unsorted bin.
+```
+```
+We could leak libc address by free chunk into unsorted bin.
+Unsorted bin attack 
+-> modify unsorted bin bk into &target-0x10 and malloc it. 
+ Target address will be filled with a large number.
+```
+### IO_FILE
+* IO_FILE structure 
+```
+{
+	0x0:'_flags',
+	0x8:'_IO_read_ptr',
+	0x10:'_IO_read_end',
+	0x18:'_IO_read_base',
+	0x20:'_IO_write_base',
+	0x28:'_IO_write_ptr',
+	0x30:'_IO_write_end',
+	0x38:'_IO_buf_base',
+	0x40:'_IO_buf_end',
+	0x48:'_IO_save_base',
+	0x50:'_IO_backup_base',
+	0x58:'_IO_save_end',
+	0x60:'_markers',
+	0x68:'_chain',
+	0x70:'_fileno',
+	0x74:'_flags2',
+	0x78:'_old_offset',
+	0x80:'_cur_column',
+	0x82:'_vtable_offset',
+	0x83:'_shortbuf',
+	0x88:'_lock',
+	0x90:'_offset',
+	0x98:'_codecvt',
+	0xa0:'_wide_data',
+	0xa8:'_freeres_list',430
+	0xb0:'_freeres_buf',
+	0xb8:'__pad5',
+	0xc0:'_mode',
+	0xc4:'_unused2',
+	0xd8:'vtable'
+}
 ```
 ### Others
 * Close ASLR
