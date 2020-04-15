@@ -10,6 +10,7 @@
 	* [Brute force password tools](#Password-crack)
 * CTF Pwn Cheatsheet
 	* [Build pwn environment with docker](#Environment)
+	* [Others](#Others)
 * Privilege Escalation
 * Reverse Shell
 ## Hacking Tools
@@ -271,4 +272,27 @@ echo "set -g mouse on" > .tmux.conf
 docker commit "Container ID" "Image Name"
 docker run -it --privileged --name "Container Name" -v "Shared Folder Path" "Your Docker Image"
 ```
+### Others
+* Close ASLR
+```
+Close :
+echo 0 > /proc/sys/kernel/randomize_va_space
 
+Open ASLR(Partial Random)：
+echo 1 > /proc/sys/kernel/randomize_va_space
+
+Open ASLR(Full Random)：
+echo 2 > /proc/sys/kernel/randomize_va_space
+```
+* A good docker image for pwn(pwndocker)  
+pwndocker : https://github.com/skysider/pwndocker.git  
+How to change glibc in pwndocker ?
+```
+cp /glibc/2.27/64/lib/ld-2.27.so /tmp/ld-2.27.so
+patchelf --set-interpreter /tmp/ld-2.27.so ./test
+LD_PRELOAD=./libc.so.6 ./test
+
+or
+
+p = process(["/path/to/ld.so", "./test"], env={"LD_PRELOAD":"/path/to/libc.so.6"})
+```
