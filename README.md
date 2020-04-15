@@ -286,18 +286,18 @@ echo 2 > /proc/sys/kernel/randomize_va_space
 ```
 * Some useful Linux command
 ```
-readelf -S ./libc.so	# Check all segement offset in libc
-readelf -s ./libc.so.6 | grep system	# Check function offset in libc 
+readelf -S ./libc.so    # Check all segement offset in libc
+readelf -s ./libc.so.6 | grep system    # Check function offset in libc 
 ```
 ```
-strings ./libc.so | grep 2.		# Check libc version
-ldd --version 		# Check OS libc version
+strings ./libc.so | grep 2.    # Check libc version
+ldd --version    # Check OS libc version
 ```
 ```
-objdump -M intel -d "program_name"		# Reverse binary into assembly
+objdump -M intel -d "program_name"    # Reverse binary into assembly
 ```
 ```
-uname -a	# Check OS version
+uname -a    # Check OS version
 cat /etc/*-release
 ```
 * A good docker image for pwn(pwndocker)  
