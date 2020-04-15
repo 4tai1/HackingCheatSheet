@@ -9,6 +9,7 @@
 	* [Metasploit](#Metasploit)
 	* [Brute force password tools](#Password-crack)
 * CTF Pwn Cheatsheet
+	* [Build pwn environment with docker](#Environment)
 * Privilege Escalation
 * Reverse Shell
 ## Hacking Tools
@@ -228,5 +229,46 @@ john encrypted.txt --wordlist=rockyou.txt (this is a password dictionary file)
 It is a tool that could crack online password.
 ```
 hydra -l "Target User Name" -P rockyou.txt "IP"
+```
+
+## Hacking Tools
+### Environment
+* Pull ubuntu environment from dockerhub
+```
+docker pull ubuntu:19.04 #
+docker run -i -t --name create_env ubuntu:19.04 bash
+```
+* Setuo docker image environment 
+```
+apt-get update
+apt-get install vim 
+apt-get install gdb
+apt-get install python2.7 python-pip python-dev git libssl-dev libffi-dev build-essential
+pip install pwntools
+```
+* Install peda & pwngdb
+```
+git clone https://github.com/longld/peda.git ~/peda
+echo "source ~/peda/peda.py" >> ~/.gdbinit
+git clone https://github.com/scwuaptx/Pwngdb.git 
+cp ~/Pwngdb/.gdbinit ~/
+```
+* Install ROPgadget & one_gadget
+```
+pip install ropgadget 
+apt-get install ruby
+apt-get install gem
+gem install one_gadget
+```
+* Install tmux
+```
+apt-get install tmux 
+touch .tmux.conf 
+echo "set -g mouse on" > .tmux.conf
+```
+* Create docker image & pwn container 
+```
+docker commit "Container ID" "Image Name"
+docker run -it --privileged --name "Container Name" -v "Shared Folder Path" "Your Docker Image"
 ```
 
