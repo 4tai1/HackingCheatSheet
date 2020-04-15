@@ -12,7 +12,7 @@
 * Reverse Shell
 ## Hacking Tools
 ### Proxychains 
-Proxychaons is a tool that could let us anonymous on the internet.
+Proxychains is a tool that could let us anonymous on the internet.
 * Install On Ubuntu
 ```
 1. git clone https://github.com/rofl0r/proxychains
