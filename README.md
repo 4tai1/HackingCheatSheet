@@ -285,11 +285,36 @@ docker run -it --privileged --name "Container Name" -v "Shared Folder Path" "You
 "%1768c%10$hn" + "some offset" + "got@xxx"    # 1768 = 0x6E8 , got@xxx : 0x7fxxxxxx06E8
 ```
 ### LinuxHeap
+* Free inspection mechanism
+```
+if (__builtin_expect((uintptr_t) p > (uintptr_t) -size, 0) ||
+	__builtin_expect(misaligned_chunk(p), 0)) {    // Check if address is aligned.
+	errstr = "free(): invalid pointer";
+errout:
+	if (!have_lock && locked) __libc_lock_unlock(av->mutex);
+	malloc_printerr(check_action, errstr, chunk2mem(p), av);
+	return;
+}
+
+Check if address is aligned.
+-> free(): invalid pointer 
+```
+```
+
+if (__glibc_unlikely(size < MINSIZE || !aligned_OK(size))) { 
+	errstr = "free(): invalid size";
+	goto errout;
+}
+
+Check if size > MINSIZE or integer multiple of MALLOC_ALIGNMENT
+-> free(): invalid size 
+```
 * Fast bin
 ```
 7 bins
 Size < 0x90 bytes
 Single link list (LIFO)
+Chunk fd point to next chunk head(not user data!!!)
 When we free the fast bin chnuk P flag would "not" be setted to zero.
 ```
 ```
@@ -297,6 +322,32 @@ Address alignment weakness
 When malloc fast bin, it will check if the size is correct.
 Fasbin attack 
 -> modify fd address and malloc it.
+```
+* fast bin free mechanism
+```
+if (have_lock || 
+	({assert(locked == 0);__libc_lock_lock(av->mutex);
+	locked = 1;
+    chunksize_nomask(chunk_at_offset(p, size)) <= 2 * SIZE_SZ ||
+    chunksize(chunk_at_offset(p, size)) >= av->system_mem;
+    })) 
+{
+	errstr = "free(): invalid next size (fast)";
+	goto errout;
+}
+
+Check if next size > (2 * SIZE_SZ)
+Check if next size < system_mem(132k)
+-> free(): invalid next size (fast)
+```
+```
+if (__builtin_expect(old == p, 0)) {
+	errstr = "double free or corruption (fasttop)";
+	goto errout;
+}
+
+Check if chunk is the same as first chunk in fast bin 
+-> double free or corruption (fasttop)
 ```
 * Small bin
 ```
@@ -320,10 +371,110 @@ We could leak libc address by free chunk into unsorted bin.(fd & bk will point t
 Unsorted bin attack 
 -> modify unsorted bin bk into &target-0x10 and malloc it. 
    Target address will be filled with a large number.
+   (Before libc-2.28)
+```
+* Libc-2.29 malloc unsirted bin
+```
+bck = victim->bk;
+size = chunksize (victim);
+mchunkptr next = chunk_at_offset (victim, size);
+
+if (__glibc_unlikely (size <= 2 * SIZE_SZ) || __glibc_unlikely (size > av->system_mem))
+  malloc_printerr ("malloc(): invalid size (unsorted)");
+
+if (__glibc_unlikely (chunksize_nomask (next) < 2 * SIZE_SZ) 
+		|| __glibc_unlikely (chunksize_nomask (next) > av->system_mem))
+ 	malloc_printerr ("malloc(): invalid next size (unsorted)");
+
+if (__glibc_unlikely ((prev_size (next) & ~(SIZE_BITS)) != size))
+	malloc_printerr ("malloc(): mismatching next->prev_size (unsorted)");
+
+if (__glibc_unlikely (bck->fd != victim)
+    || __glibc_unlikely (victim->fd != unsorted_chunks (av)))
+  malloc_printerr ("malloc(): unsorted double linked list corrupted");
+
+if (__glibc_unlikely (prev_inuse (next)))
+  malloc_printerr ("malloc(): invalid next->prev_inuse (unsorted)");
+
+-> 1. It will check if chunk size is legal.
+   2. It will check if the next chunk size is legal.
+   3. Check if size == next prev_size
+   4. Check the double link list in unsorted bin is complete (Couldn't do unsorted bin attack)
+   5. Check if the next chunk prev_inuse is zero
 ```
 * Tcache
 ```
+If chunk size <= 0x410, chunk will be freed into tcache first.
+Tcache fd point to next chunk's user data(not chunk head!!!)
+It doesn't check if size is legal when malloc 
+It doesn't check double free(Before libc-2.29)
 ```
+* libc-2.27 free tcache & malloc tcache
+```
+tcache_put (mchunkptr chunk, size_t tc_idx)
+{
+  tcache_entry *e = (tcache_entry *) chunk2mem (chunk);
+  assert (tc_idx < TCACHE_MAX_BINS);
+  e->next = tcache->entries[tc_idx];
+  tcache->entries[tc_idx] = e;
+  ++(tcache->counts[tc_idx]);
+}
+
+-> Doesn't check double free.
+
+tcache_get (size_t tc_idx)
+{
+  tcache_entry *e = tcache->entries[tc_idx];
+  assert (tc_idx < TCACHE_MAX_BINS);
+  assert (tcache->entries[tc_idx] > 0);
+  tcache->entries[tc_idx] = e->next;
+  --(tcache->counts[tc_idx]);
+  return (void *) e;
+}
+
+-> Doesn't check if size is legal
+```
+* Libc-2.29 free tcache & malloc tcache
+```
+tcache_put (mchunkptr chunk, size_t tc_idx)
+{
+  tcache_entry *e = (tcache_entry *) chunk2mem (chunk);
+  assert (tc_idx < TCACHE_MAX_BINS);
+
+  /* Mark this chunk as "in the tcache" so the test in _int_free will
+     detect a double free.  */
+  e->key = tcache;	//new
+
+  e->next = tcache->entries[tc_idx];
+  tcache->entries[tc_idx] = e;
+  ++(tcache->counts[tc_idx]);
+}
+
+-> If tcache bk point to chunk->key, it will check if there is double free.
+   (If we could modify bk to others values, we could do double free)
+
+tcache_get (size_t tc_idx)
+{
+  tcache_entry *e = tcache->entries[tc_idx];
+  assert (tc_idx < TCACHE_MAX_BINS);
+  assert (tcache->entries[tc_idx] > 0);
+  tcache->entries[tc_idx] = e->next;
+  --(tcache->counts[tc_idx]);
+  e->key = NULL;	//new
+  return (void *) e;
+}
+
+-> Tcache bk will be filled with zero when malloc.
+   It still doesn't check if size is legal.
+```
+* Libc-2.29 top chunk inspection 
+```
+if (__glibc_unlikely (size > av->system_mem))//0x21000
+        malloc_printerr ("malloc(): corrupted top size");
+
+-> Check if top chunk size is legal (couldn't do House Of Force)
+```
+
 ### IO_FILE
 * IO_FILE structure 
 ```
