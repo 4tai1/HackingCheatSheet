@@ -363,7 +363,7 @@ Double link list
 ```
 * Unsorted bin
 ```
-If chunk size bigger then fast bin, it will be put in unsirted bin first.
+If chunk size bigger then fast bin, it will be put in unsorted bin first.
 If the chunk size we need doesn't in tcache and fast bin, chunk will be split from unsorted bin.
 ```
 ```
@@ -373,7 +373,7 @@ Unsorted bin attack
    Target address will be filled with a large number.
    (Before libc-2.28)
 ```
-* Libc-2.29 malloc unsirted bin
+* Libc-2.29 malloc unsorted bin
 ```
 bck = victim->bk;
 size = chunksize (victim);
