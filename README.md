@@ -511,6 +511,25 @@ if (__glibc_unlikely (size > av->system_mem))//0x21000
 	0xd8:'vtable'
 }
 ```
+* Hijack stdin to do arbitrary write
+```
+If we could hijack IO_FILE structure of stdin, we could modify _IO_buf_base and IO_buf_end
+to do arbitrary write when call scanf(), IO_get_c, etc.
+
+-> _IO_buf_base = 'the start of address we wanna write' 
+   _IO_buf_end = 'the end of address we wanna write'
+```
+* Hijack stdout to do arbitrary read for leaking memory
+```
+If we could hijack _flags and _IO_write_base , we are able to do arbitrary leak.
+
+<_IO_2_1_stdout_>:       0x00000000fbad1800      0x0000000000000000
+<_IO_2_1_stdout_+16>:    0x0000000000000000      0x0000000000000000
+<_IO_2_1_stdout_+32>:    "address we wanna leak" 0x00007ffff7dd07e3
+<_IO_2_1_stdout_+48>:    0x00007ffff7dd07e3      0x00007ffff7dd07e3
+<_IO_2_1_stdout_+64>:    0x00007ffff7dd07e4      0x0000000000000000
+<_IO_2_1_stdout_+80>:    0x0000000000000000      0x0000000000000000
+```
 ### Others
 * Close ASLR
 ```
