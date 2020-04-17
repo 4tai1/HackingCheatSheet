@@ -516,11 +516,11 @@ if (__glibc_unlikely (size > av->system_mem))//0x21000
 If we could hijack IO_FILE structure of stdin, we could modify _IO_buf_base and IO_buf_end
 to do arbitrary write when call scanf(), IO_get_c, etc.
 
-<_IO_2_1_stdin_>:	    0x00000000fbad208b	    0x00007ffff7fbca83
-<_IO_2_1_stdin_+16>:	0x00007ffff7fbca83	    0x00007ffff7fbca83
-<_IO_2_1_stdin_+32>:	0x00007ffff7fbca83	    0x00007ffff7fbca83
-<_IO_2_1_stdin_+48>:	0x00007ffff7fbca83	    "the begining address we wanna write"
-<_IO_2_1_stdin_+64>:	"the end of address"	0x0000000000000000
+<_IO_2_1_stdin_>:       0x00000000fbad208b      0x00007ffff7fbca83
+<_IO_2_1_stdin_+16>:    0x00007ffff7fbca83      0x00007ffff7fbca83
+<_IO_2_1_stdin_+32>:    0x00007ffff7fbca83      0x00007ffff7fbca83
+<_IO_2_1_stdin_+48>:    0x00007ffff7fbca83      "the begining address we wanna write"
+<_IO_2_1_stdin_+64>:    "the end of address"	0x0000000000000000
 <_IO_2_1_stdin_+80>:    0x0000000000000000      0x0000000000000000
 ```
 * Hijack stdout to do arbitrary read for leaking memory
