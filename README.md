@@ -604,6 +604,11 @@ p = process(["/path/to/ld.so", "./test"], env={"LD_PRELOAD":"/path/to/libc.so.6"
 5. kfree (, const void * objp )    # Release kernel memory
 6. commit_creds(prepare_kernel_cred(0))    # Do privilege escalation
 ```
+* The address of "commit_creds()" & "prepare_kernel_cred()"
+```
+/proc/kallsyms
+-> We could read this file to leak address.
+```
 ### Cred
 Cred is a kernel structure which record the process permission information.
 ("uid" and "gid" are the main targets of hackers)
@@ -651,11 +656,6 @@ struct cred {
 		struct rcu_head	rcu;		/* RCU deletion hook */
 	};
 } __randomize_layout;
-```
-* The address of "commit_creds()" & "prepare_kernel_cred()"
-```
-/proc/kallsyms
--> We could read this file to leak address.
 ```
 ### KernelROP
 ### ret2usr 
