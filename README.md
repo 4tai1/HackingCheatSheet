@@ -535,7 +535,7 @@ If we could hijack _flags and _IO_write_base , we are able to do arbitrary leak.
 <_IO_2_1_stdout_+80>:    0x0000000000000000      0x0000000000000000
 ```
 ### Others
-* Close ASLR
+* ASLR
 ```
 Close :
 echo 0 > /proc/sys/kernel/randomize_va_space
