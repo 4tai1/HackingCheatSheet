@@ -543,7 +543,7 @@ If we could hijack _flags and _IO_write_base , we are able to do arbitrary leak.
 ### Others
 * ASLR
 ```
-Close :
+Close ASLR:
 echo 0 > /proc/sys/kernel/randomize_va_space
 
 Open ASLR(Partial Random)：
