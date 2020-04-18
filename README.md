@@ -14,7 +14,13 @@
 	* [Linux heap mechanism](#LinuxHeap)
 	* [Linux IO_FILE](#IO_FILE)
 	* [Others](#Others)
-* Privilege Escalation
+* Linux Privilege Escalation
+	* [Basic Knowlege](#Basic)
+	* [Cred Structure](#Cred)
+	* [Kernel ROP](#KernelROP)
+	* [ret2usr](#ret2usr)
+	* [Bypass Smep](BypassSmep)
+	* [Some Privilege Escalation trick](#Others)
 * Reverse Shell
 ## Hacking Tools
 ### Proxychains 
@@ -574,3 +580,84 @@ or
 
 p = process(["/path/to/ld.so", "./test"], env={"LD_PRELOAD":"/path/to/libc.so.6"})
 ```
+## Linux Privilege Escalation
+### Basic
+* How to change user to kernel
+```
+1. Swape register GS (By "swapgs").
+2. Push rsp into CPU variable area. 
+   Push address of kernel stack into rsp.
+3. Push all registers to record status 
+4. Call systme call handler in system call table.
+```
+* How to change kernel to user
+```
+1. Swape register GS (By "swapgs").
+2. Call sysretq or iretq return to user.
+```
+* Some basic kernel functions
+```
+1. printk    # Print some kernel message(chekc by "dmesg")
+2. copy_from_user(void *to, const void *from, unsigned long n);    # Copy message from user space
+3. copy_to_user (void __user *to, const void *from, unsigned long n);    # Copy message to user space
+4. kmalloc(size_t size, gfp_t flags)    # Allocate kernel memory
+5. kfree (, const void * objp )    # Release kernel memory
+6. commit_creds(prepare_kernel_cred(0))    # Do privilege escalation
+```
+### Cred
+Cred is a kernel structure which record the process permission information.
+("uid" and "gid" are the main targets of hackers)
+```
+struct cred {
+	atomic_t	usage;
+#ifdef CONFIG_DEBUG_CREDENTIALS
+	atomic_t	subscribers;	/* number of processes subscribed */
+	void		*put_addr;
+	unsigned	magic;
+#define CRED_MAGIC	0x43736564
+#define CRED_MAGIC_DEAD	0x44656144
+#endif
+	kuid_t		uid;		/* real UID of the task */
+	kgid_t		gid;		/* real GID of the task */
+	kuid_t		suid;		/* saved UID of the task */
+	kgid_t		sgid;		/* saved GID of the task */
+	kuid_t		euid;		/* effective UID of the task */
+	kgid_t		egid;		/* effective GID of the task */
+	kuid_t		fsuid;		/* UID for VFS ops */
+	kgid_t		fsgid;		/* GID for VFS ops */
+	unsigned	securebits;	/* SUID-less security management */
+	kernel_cap_t	cap_inheritable; /* caps our children can inherit */
+	kernel_cap_t	cap_permitted;	/* caps we're permitted */
+	kernel_cap_t	cap_effective;	/* caps we can actually use */
+	kernel_cap_t	cap_bset;	/* capability bounding set */
+	kernel_cap_t	cap_ambient;	/* Ambient capability set */
+#ifdef CONFIG_KEYS
+	unsigned char	jit_keyring;	/* default keyring to attach requested
+					 * keys to */
+	struct key	*session_keyring; /* keyring inherited over fork */
+	struct key	*process_keyring; /* keyring private to this process */
+	struct key	*thread_keyring; /* keyring private to this thread */
+	struct key	*request_key_auth; /* assumed request_key authority */
+#endif
+#ifdef CONFIG_SECURITY
+	void		*security;	/* subjective LSM security */
+#endif
+	struct user_struct *user;	/* real user ID subscription */
+	struct user_namespace *user_ns; /* user_ns the caps and keyrings are relative to. */
+	struct group_info *group_info;	/* supplementary groups for euid/fsgid */
+	/* RCU deletion */
+	union {
+		int non_rcu;			/* Can we skip RCU deletion? */
+		struct rcu_head	rcu;		/* RCU deletion hook */
+	};
+} __randomize_layout;
+```
+* The address of "commit_creds()" & "prepare_kernel_cred()"
+```
+/proc/kallsyms
+-> We could read this file to leak address.
+```
+### KernelROP
+### ret2usr 
+### BypassSmep 
+### Others
