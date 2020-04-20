@@ -664,7 +664,7 @@ struct cred {
 } __randomize_layout;
 ```
 ### Tty_structure
-Tty_structure is an useful structure for pwn.
+Tty_structure is an useful structure for pwn.  
 When we open "/dev/ptmx" kernel will allocate an tty_structure,
 If we could hijack the "tty_operations ops" to our malicious structure.
 ```
