@@ -663,6 +663,43 @@ struct cred {
 } __randomize_layout;
 ```
 ### KernelROP
+```
+----------------------
+|Save status         |
+----------------------
+|pop rdi; ret;       |
+----------------------
+|0                   |
+----------------------
+|prepare_kernel_cred;|
+----------------------
+|mov rdi, rax;       |
+----------------------
+|commit_creds;       |
+----------------------
+|swapgs; ret;        |
+----------------------
+|iretq; ret;         |
+----------------------
+|system(/bin/sh);    |
+----------------------
+
+```
 ### ret2usr 
+* Return to user space from kernel space
+```
+mov user_cs, cs;
+mov user_ss, ss;
+mov user_sp, rsp;
+pushf;
+pop user_rflags;
+swapgs; 
+iretq;
+```
+```
+swapgs;
+sysretq;
+```
+
 ### BypassSmep 
 ### Others
