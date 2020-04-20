@@ -807,7 +807,7 @@ iretq;
 swapgs;
 sysretq;
 ```
-### BypassSmep
+### SMEP
 SMEP is a kernel protection to avoid ret2usr.
 If the program from kernel space access the user space memory, SMEP will tirgger an error.
 * How to know if the SMEP is opened ?
