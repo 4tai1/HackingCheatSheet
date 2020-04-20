@@ -688,10 +688,10 @@ struct cred {
 ### ret2usr 
 * Return to user space from kernel space
 ```
-mov user_cs, cs;
+mov user_cs, cs;    # save status
 mov user_ss, ss;
 mov user_sp, rsp;
-pushf;
+pushf;       
 pop user_rflags;
 swapgs; 
 iretq;
