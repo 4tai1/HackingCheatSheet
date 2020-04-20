@@ -18,11 +18,11 @@
 * Linux Privilege Escalation
 	* [Basic Knowlege](#Basic)
 	* [Cred Structure](#Cred)
-	* [Tty Structure](#Tty_struct)
+	* [Tty Structure](#TtyStruct)
 	* [Kernel ROP](#KernelROP)
 	* [ret2usr](#ret2usr)
 	* [Bypass Smep](BypassSmep)
-	* [Some Privilege Escalation trick](#Others)
+	* [Some Privilege Escalation trick](#OthersTrick)
 * Reverse Shell
 ## Hacking Tools
 ### Proxychains 
@@ -663,7 +663,7 @@ struct cred {
 	};
 } __randomize_layout;
 ```
-### Tty_structure
+### TtyStructure
 Tty_structure is an useful structure for pwn.  
 When we open "/dev/ptmx" kernel will allocate an tty_structure,
 If we could hijack the "tty_operations ops" to our malicious structure.
@@ -822,5 +822,5 @@ mov cr4, 0x1407e0;
 ```
 mov cr4, 0x6f0
 ```
-### Others
+### OthersTrick
 
