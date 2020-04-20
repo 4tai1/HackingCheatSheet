@@ -18,7 +18,7 @@
 * Linux Privilege Escalation
 	* [Basic Knowlege](#Basic)
 	* [Cred Structure](#Cred)
-	* [Tty Structure](#TtyStruct)
+	* [Tty Structure](#TtyStructure)
 	* [Kernel ROP](#KernelROP)
 	* [ret2usr](#ret2usr)
 	* [Bypass Smep](BypassSmep)
